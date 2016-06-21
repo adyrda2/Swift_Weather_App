@@ -1,0 +1,20 @@
+[
+  "precipIntensity": 0.0094,
+  "pressure": 1013.25,
+  "icon": rain,
+  "time": 1465585862,
+  "precipProbability": 1,
+  "windSpeed": 5.69,
+  "precipType": rain,
+  "summary": "Light Rain",
+  "apparentTemperature": 90.54000000000001,
+  "dewPoint": 66.12,
+  "nearestStormDistance": 0,
+  "cloudCover": 0.25,
+  "humidity": 0.48,
+  "precipIntensityError": 0.0008,
+  "temperature": 88.02,
+  "windBearing": 196,
+  "visibility": 9.960000000000001,
+  "ozone": 326.92
+]

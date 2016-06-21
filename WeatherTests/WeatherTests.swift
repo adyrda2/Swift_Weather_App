@@ -1,36 +1,64 @@
-//
-//  WeatherTests.swift
-//  WeatherTests
-//
-//  Created by Angela Dyrda on 6/1/16.
-//  Copyright © 2016 angela. All rights reserved.
-//
+import Quick
+import Nimble
 
-import XCTest
+
 @testable import Weather
 
-class WeatherTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+class FakeURLSessionDataTask: URLSessionDataTaskProtocol {
+  var response: NSURLResponse?
+  func resume() {
+  }
+}
+
+class FakeURLSession: URLSessionProtocol {
+  func dataTaskWithRequest(request: NSURLRequest, completionHandler: DataTaskResult) -> URLSessionDataTaskProtocol {
+    if request.URL == NSURL(string: "http://unavailableUrl") {
+      let sessionDataTask = FakeURLSessionDataTask()
+      let error = NSError(domain: "Invalid URL", code: 404, userInfo: ["":""])
+      sessionDataTask.response = NSHTTPURLResponse(URL: request.URL!, statusCode: 404, HTTPVersion: "1.2", headerFields: nil)
+      completionHandler(nil, sessionDataTask.response, error)
+      return sessionDataTask
+    } else  if request.URL == NSURL(string: "http://validURL") {
+      let sessionDataTask = FakeURLSessionDataTask()
+      sessionDataTask.response = NSHTTPURLResponse(URL: request.URL!, statusCode: 200, HTTPVersion: "1.2", headerFields: nil)
+      completionHandler(nil, sessionDataTask.response, nil)
+      return sessionDataTask
+    } else {
+      return NSURLSessionDataTask()
     }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
+  }
+}
+
+class NetworkSpec: QuickSpec {
+  override func spec() {
+    describe("Network") {
+      context("with an unavailable url") {
+        it("should provide an error") {
+          
+          let network = Network()
+          network.taskProvider = FakeURLSession().dataTaskWithRequest
+          network.httpGet("http://unavailableUrl") { jsonObject, error in
+            
+            expect(error).toNot(beNil())
+          }
         }
+      }
+      
+      context("with a valid url") {
+        fit("should return the current weather data") {
+          let network = Network()
+          network.taskProvider = FakeURLSession().dataTaskWithRequest
+          network.httpGet("http://validURL") { jsonObject, error in
+            
+            expect(error).to(beNil())
+          }
+        }
+      }
+      
+      context("httpGet()") {
+        it("resume gets called and starts the request") {
+        }
+      }
     }
-    
+  }
 }

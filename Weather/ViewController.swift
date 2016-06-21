@@ -1,25 +1,16 @@
-//
-//  ViewController.swift
-//  Weather
-//
-//  Created by Angela Dyrda on 6/1/16.
-//  Copyright © 2016 angela. All rights reserved.
-//
-
 import UIKit
 
 class ViewController: UIViewController {
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
+  
+  
+  @IBAction func buttonPressed(sender: AnyObject) {
+    performSegueWithIdentifier("ShowWeather", sender: self)
   }
-
+  
+  
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
-
-
+  
 }
-
